@@ -2,8 +2,8 @@
 
     class View {
         
-        public function make($controller, $function) {
-
+        public function make($view) {
+            echo file_get_contents('../views/' . $view . '.view.php');
         }
 
     }

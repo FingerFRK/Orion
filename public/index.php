@@ -1,5 +1,10 @@
 <?php
 
+    // Views
+
+    require_once '../app/View/View.php';
+    $views = new View();
+
     // Router
 
     require_once '../app/Router/Router.php';
@@ -7,18 +12,12 @@
     require_once '../routes/web.php';
 
 
-
-    // Views
-
-    require_once '../app/View/View.php';
-    $views = new View();
-
-
+    // Work
 
     if ($router->match("/".$_GET['url'])) {
         echo $router->call("/".$_GET['url']);
     } else {
-        // 404
+        echo "404 :(";
     }
 
 ?>

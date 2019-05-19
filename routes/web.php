@@ -1,6 +1,6 @@
 <?php
 
-    $router->add("/", "FrontController@index", "accueil");
-    $router->add("/about", "FrontController@about", "a-propos");
+    $router->add("/", "FrontController@index", "home");
+    $router->add("/about", "FrontController@about", "about");
 
 ?>
