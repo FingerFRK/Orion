@@ -13,7 +13,7 @@
     if ($router->match("/".$_GET['url'])) {
         echo $router->call("/".$_GET['url']);
     } else {
-        echo "404 :(";
+        $views->make('404');
     }
 
 ?>
