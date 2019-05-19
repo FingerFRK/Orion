@@ -1,3 +1,3 @@
-# Orion
-A PHP Framework
+## About Orion
 
+Orion is a web application framework.
