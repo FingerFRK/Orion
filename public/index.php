@@ -10,8 +10,8 @@
     require_once '../routes/web.php';
 
     // Work
-    if ($router->match("/".$_GET['url'])) {
-        echo $router->call("/".$_GET['url']);
+    if ($router->match($_SERVER['REQUEST_URI'])) {
+        echo $router->call($_SERVER['REQUEST_URI']);
     } else {
         $views->make('404');
     }

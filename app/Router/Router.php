@@ -6,7 +6,6 @@
 
         public function add($route, $call, $name = null) {
             global $routes;
-
             $routes[] = array("route" => $route, "call" => $call, "name" => $name);
         }
 
