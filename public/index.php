@@ -1,19 +1,8 @@
 <?php
 
-    // Views
-    require_once '../app/View/View.php';
-    $views = new View();
+    define('ROOT', dirname(__DIR__));
 
-    // Router
-    require_once '../app/Router/Router.php';
-    $router = new Router();
-    require_once '../routes/web.php';
+    require ROOT.'/core/Orion.php';
+    Orion::load();
 
-    // Work
-    if ($router->match($_SERVER['REQUEST_URI'])) {
-        echo $router->call($_SERVER['REQUEST_URI']);
-    } else {
-        $views->make('404');
-    }
-
-?>
+    Orion::getInstance()->getRouter()->load();
