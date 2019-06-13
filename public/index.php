@@ -5,4 +5,19 @@
     require ROOT.'/core/Orion.php';
     Orion::load();
 
-    Orion::getInstance()->getRouter()->load();
+    if (isset($_GET['page'])) {
+        $page = $_GET['page'];
+    } else {
+        $page = "home";
+    }
+
+    ob_start();
+    switch ($page) {
+        case 'home':
+            require ROOT . '/views/front/index.view.php';
+            break;
+        
+    }
+    $content = ob_get_clean();
+
+    require ROOT . '/views/template.view.php';

@@ -14,12 +14,12 @@
             if (is_null($this->model)) {
                 $parts = explode("\\", get_class($this));
                 $class_name = end($parts);
-                $this->model = strtolower(str_replace('Model', '', $class_name));
+                $this->model = strtolower(str_replace('Model', '', $class_name)).'s';
             }
         }
         
         public function all() {
-            return $this->query("SELECT * FROM " . $this->model);
+            return $this->query("SELECT * FROM {$this->model}");
         }
 
         public function find($id) {
