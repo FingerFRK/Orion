@@ -16,6 +16,9 @@
         case 'home':
             require ROOT . '/views/front/index.view.php';
             break;
+        case 'user':
+            require ROOT . '/views/front/users.view.php';
+            break;
         
     }
     $content = ob_get_clean();
