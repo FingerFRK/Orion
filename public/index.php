@@ -11,7 +11,7 @@
 
     require ROOT.'/routes/web.php';
     
-    $match = $router->match();
+    $match = $router->match(str_replace('/OrionGIT/public', '', $_SERVER['REQUEST_URI']));
     
     if (is_array($match)) {
         ob_start();
@@ -21,6 +21,11 @@
             $params = $match['params'];
             require ROOT . '/views/front/'.$match['target'].'.view.php';
         }
+        $content = ob_get_clean();
+        require ROOT . '/views/template.view.php';
+    } else {
+        ob_start();
+        require ROOT . '/views/404.view.php';
         $content = ob_get_clean();
         require ROOT . '/views/template.view.php';
     }
