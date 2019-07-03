@@ -13,10 +13,7 @@ define('ROOT', dirname(__DIR__));
     if ($router->match($_SERVER['REQUEST_URI'])) {
         $router->call($_SERVER['REQUEST_URI']);
     } else {
-        ob_start();
-        require_once ROOT . '/views/404.view.php';
-        $content = ob_get_clean();
-        require ROOT . '/views/template.view.php';
+        echo "false";
     }
     
     // call_user_func_array($match['target'], $match['param']);
