@@ -1,5 +1,3 @@
 <?php
 
-    $router->add("/", "FrontController@index", "home");
-
-?>
+    $router->add("GET", '/', 'FrontController@index', 'home');

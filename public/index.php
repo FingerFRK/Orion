@@ -1,19 +1,23 @@
 <?php
+use Core\Router\Router;
 
-    // Views
-    require_once '../app/View/View.php';
-    $views = new View();
+define('ROOT', dirname(__DIR__));
 
-    // Router
-    require_once '../app/Router/Router.php';
+    require ROOT.'/core/Orion.php';
+    Orion::load();
+
     $router = new Router();
-    require_once '../routes/web.php';
 
-    // Work
+    require ROOT . '/routes/web.php';
+
     if ($router->match($_SERVER['REQUEST_URI'])) {
-        echo $router->call($_SERVER['REQUEST_URI']);
+        $router->call($_SERVER['REQUEST_URI']);
     } else {
-        $views->make('404');
+        ob_start();
+        require_once ROOT . '/views/404.view.php';
+        $content = ob_get_clean();
+        require ROOT . '/views/template.view.php';
     }
-
-?>
+    
+    // call_user_func_array($match['target'], $match['param']);
+    // $match = $router->match(str_replace('/OrionGIT/public', '', $_SERVER['REQUEST_URI']));
