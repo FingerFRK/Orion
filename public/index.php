@@ -1,7 +1,6 @@
 <?php
-use Core\Router\Router;
 
-define('ROOT', dirname(__DIR__));
+    use Core\Router\Router;
 
     define('ROOT', dirname(__DIR__));
 
@@ -21,11 +20,8 @@ define('ROOT', dirname(__DIR__));
         $controller = 'App\\Controllers\\' . ucfirst($_controller);
         $controller = new $controller();
         $controller->$_function();
-    } else if (file_exists(ROOT . '/views/' . $match['target'] . '.view.php')) {
-        require ROOT . '/views/' . $match['target'] . '.view.php';
+    } else if (file_exists(ROOT . '/views/' . $match['target'] . '.spark.php')) {
+        require ROOT . '/views/' . $match['target'] . '.spark.php';
     } else {
-        require ROOT . '/core/Views/404.view.php';
+        require ROOT . '/core/Views/404.spark.php';
     }
-    
-    // call_user_func_array($match['target'], $match['param']);
-    // $match = $router->match(str_replace('/OrionGIT/public', '', $_SERVER['REQUEST_URI']));
