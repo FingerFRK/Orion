@@ -4,23 +4,24 @@
 
     define('ROOT', dirname(__DIR__));
 
-    require ROOT.'/core/Orion.php';
+    require ROOT . '/core/Orion.php';
     Orion::load();
-
-    $router = new Router();
-
-    require ROOT.'/routes/web.php';
     
-    $match = $router->match();
-    
-    if (is_array($match)) {
-        ob_start();
-        if (is_callable($match['target'])) {
-            call_user_func_array($match['target'], $match['param']);
-        } else {
-            $params = $match['params'];
-            require ROOT . '/views/front/'.$match['target'].'.view.php';
-        }
-        $content = ob_get_clean();
-        require ROOT . '/views/template.view.php';
+    global $router;
+    $router = new Router;
+    require ROOT . '/routes/web.php';
+
+    $match = $router->match($_SERVER['REQUEST_URI']);
+
+    if(is_array($match) && is_callable($match['target'])) {
+        call_user_func($match['target']);
+    } else if (strpos($match['target'], '@') !== false) {
+        list($_controller, $_function) = explode('@', $match['target']);
+        $controller = 'App\\Controllers\\' . ucfirst($_controller);
+        $controller = new $controller();
+        $controller->$_function();
+    } else if (file_exists(ROOT . '/views/' . $match['target'] . '.view.php')) {
+        require ROOT . '/views/' . $match['target'] . '.view.php';
+    } else {
+        require ROOT . '/core/Views/404.view.php';
     }

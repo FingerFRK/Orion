@@ -3,7 +3,7 @@
     
     /**
      * Class Autoloader
-     * @package App
+     * @package Core
      */
     class Autoloader{
 

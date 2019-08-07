@@ -4,7 +4,7 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta http-equiv="X-UA-Compatible" content="ie=edge">
-        <title>Default page for Orion</title>
+        <title><?= $this->getBlockContent('title') ?> - Orion</title>
         <!-- Font Awesome -->
         <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css">
         <!-- Bootstrap core CSS -->
@@ -30,11 +30,7 @@
     </head>
     <body>
 
-        <main class="container">
-
-            <?= $content ?>
-
-        </main>
+        <?= $this->getBlockContent('body') ?>
         
     </body>
 </html>
