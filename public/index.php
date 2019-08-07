@@ -1,6 +1,7 @@
 <?php
+use Core\Router\Router;
 
-    use Core\Router\Router;
+define('ROOT', dirname(__DIR__));
 
     define('ROOT', dirname(__DIR__));
 
@@ -25,3 +26,6 @@
     } else {
         require ROOT . '/core/Views/404.view.php';
     }
+    
+    // call_user_func_array($match['target'], $match['param']);
+    // $match = $router->match(str_replace('/OrionGIT/public', '', $_SERVER['REQUEST_URI']));
