@@ -9,15 +9,36 @@
     class Router {
 
         /**
-         * Liste de toutes les routes
+         * @var array Tableau de toutes les routes
          */
         private $routes = [];
 
         /**
-         * Liste de toutes les routes ayant un nom
+         * @var array Tableau de toutes les routes renommées
          */
         private $namedRoutes = [];
 
+        /**
+         * @var array Tableau des match par défaut (regex helpers)
+         */
+        protected $matchTypes = array(
+            'i'  => '[0-9]++',
+            'a'  => '[0-9A-Za-z]++',
+            'h'  => '[0-9A-Fa-f]++',
+            '*'  => '.+?',
+            '**' => '.++',
+            ''   => '[^/\.]++'
+        );
+
+
+        /**
+         * Retourne toutes les routes
+         * Utile si vous voulez afficher la liste de toutes vos routes
+         * @return array Toute les routes.
+         */
+        public function getRoutes() {
+            return $this->routes;
+        }
 
         /**
          * Définir une route
@@ -33,7 +54,7 @@
                     throw new \Exception("Vous ne pouvez pas redéfinir la route '{$name}'");
                 } else {
                     $this->namedRoutes[$name] = $route;
-                    $this->routes[] = array("method" => $method, "route" => $route, "target" => $target, "name" => $name);
+                    $this->routes[] = array($method, $route, $target, $name);
                 }
             }
         }
@@ -46,20 +67,100 @@
             }
         }
 
-        public function match($url) {
+        public function match($requestUrl = null, $requestMethod = null) {
+
+            $params = [];
             $match = false;
-            foreach ($this->routes as $route) {
-                if ($route['route'] == $url) {
-                    $match = array(
-                        'method' => $route['method'],
-                        'route' => $route['route'],
-                        'target' => $route['target'],
-                        'name' => $route['name']
+
+            // set Request Url if it isn't passed as parameter
+            if($requestUrl === null) {
+                $requestUrl = isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : '/';
+            }
+
+            // set Request Method if it isn't passed as a parameter
+            if($requestMethod === null) {
+                $requestMethod = isset($_SERVER['REQUEST_METHOD']) ? $_SERVER['REQUEST_METHOD'] : 'GET';
+            }
+
+            foreach ($this->routes as $handler) {
+
+                list($methods, $route, $target, $name) = $handler;
+                
+                $method_match = (stripos($methods, $requestMethod) !== false);
+
+                if (!$method_match) continue;
+
+                if ($route === '*') {
+                    $match = true;
+                } else if (isset($route[0]) && $route[0] === '@') {
+                    $pattern = '`' . substr($route, 1) . '`u';
+                    $match = preg_match($pattern, $requestUrl, $params) === 1;
+                } elseif (($position = strpos($route, '[')) === false) {
+                    $match = strcmp($requestUrl, $route) === 0;
+                } else {
+                    // Compare longest non-param string with url
+                    if (strncmp($requestUrl, $route, $position) !== 0) {
+                        continue;
+                    }
+                    $regex = $this->compileRoute($route);
+                    $match = preg_match($regex, $requestUrl, $params) === 1;
+                }
+
+                if ($match) {
+
+                    if ($params) {
+                        foreach ($params as $key => $value) {
+                            if (is_numeric($key)) unset($params[$key]);
+                        }
+                    }
+
+                    return array(
+                        'method' => $methods,
+                        'route' => $route,
+                        'target' => $target,
+                        'name' => $name,
+                        'params' => $params
                     );
-                    break;
                 }
             }
-            return $match;
+            return false;
+        }
+
+        /**
+         * Compile the regex for a given route (EXPENSIVE)
+         */
+        protected function compileRoute($route) {
+            if (preg_match_all('`(/|\.|)\[([^:\]]*+)(?::([^:\]]*+))?\](\?|)`', $route, $matches, PREG_SET_ORDER)) {
+
+                $matchTypes = $this->matchTypes;
+                foreach($matches as $match) {
+                    list($block, $pre, $type, $param, $optional) = $match;
+
+                    if (isset($matchTypes[$type])) {
+                        $type = $matchTypes[$type];
+                    }
+                    if ($pre === '.') {
+                        $pre = '\.';
+                    }
+
+                    $optional = $optional !== '' ? '?' : null;
+                    
+                    //Older versions of PCRE require the 'P' in (?P<named>)
+                    $pattern = '(?:'
+                            . ($pre !== '' ? $pre : null)
+                            . '('
+                            . ($param !== '' ? "?P<$param>" : null)
+                            . $type
+                            . ')'
+                            . $optional
+                            . ')'
+                            . $optional;
+
+                    $route = str_replace($block, $pattern, $route);
+                }
+
+            }
+            return "`^$route$`u";
         }
 
     }
