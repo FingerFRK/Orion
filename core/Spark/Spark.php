@@ -7,6 +7,8 @@
         private $blocks = [];
 
         private $extend;
+
+        private $override;
         
         public function block($title) {
             $this->blocks[] = [$title];
@@ -31,6 +33,13 @@
                 $this->extend = $_file;
             }
         }
+
+        public function override($template) {
+            $_file = ROOT . '/core/Views/' . $template . '.spark.php';
+            if (file_exists($_file)) {
+                $this->override = $_file;
+            }
+        }
         
         public function render(string $template, array $params = []) {
             $_file = ROOT . '/views/' . $template . '.spark.php';
@@ -40,6 +49,26 @@
                 eval(' ?>' . $content . '<?php ');
                 if (!is_null($this->extend)) {
                     require $this->extend;
+                }
+                if (!is_null($this->override)) {
+                    require $this->override;
+                }
+            } else {
+                throw new \Exception("La vue '{$template}' est inaccessible ou non créée.");
+            }
+        }
+
+        public function renderCore(string $template, array $params = []) {
+            $_file = ROOT . '/core/Views/' . $template . '.spark.php';
+            if (file_exists($_file)) {
+                extract($params);
+                $content = file_get_contents($_file);
+                eval(' ?>' . $content . '<?php ');
+                if (!is_null($this->extend)) {
+                    require $this->extend;
+                }
+                if (!is_null($this->override)) {
+                    require $this->override;
                 }
             } else {
                 throw new \Exception("La vue '{$template}' est inaccessible ou non créée.");

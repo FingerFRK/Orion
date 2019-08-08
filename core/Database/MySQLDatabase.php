@@ -28,31 +28,35 @@
             return $this->db;
         }
 
-        public function query($statement, $class_name = null, $one = false) {
+        public function query($statement, $class_name = null, $one = false, $fetch = false) {
             $request = $this->getDb()->query($statement);
-            if($class_name === null) {
-                $request->setFetchMode(PDO::FETCH_OBJ);
-            } else {
-                $request->setFetchMode(PDO::FETCH_CLASS, $class_name);
+            if ($fetch) {
+                if($class_name === null) {
+                    $request->setFetchMode(PDO::FETCH_OBJ);
+                } else {
+                    $request->setFetchMode(PDO::FETCH_CLASS, $class_name);
+                }
+                if ($one) {
+                    $datas = $request->fetch();
+                } else {
+                    $datas = $request->fetchAll();
+                }
+                return $datas;
             }
-            if ($one) {
-                $datas = $request->fetch();
-            } else {
-                $datas = $request->fetchAll();
-            }
-            return $datas;
         }
 
-        public function prepare($statement, $params, $class_name, $one = false) {
+        public function prepare($statement, $params, $class_name, $one = false, $fetch = false) {
             $request = $this->getDb()->prepare($statement);
             $request->execute($params);
-            $request->setFetchMode(PDO::FETCH_CLASS, $class_name);
-            if ($one) {
-                $datas = $request->fetch();
-            } else {
-                $datas = $request->fetchAll();
+            if ($fetch) {
+                $request->setFetchMode(PDO::FETCH_CLASS, $class_name);
+                if ($one) {
+                    $datas = $request->fetch();
+                } else {
+                    $datas = $request->fetchAll();
+                }
+                return $datas;
             }
-            return $datas;
         }
 
     }

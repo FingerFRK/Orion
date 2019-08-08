@@ -1,7 +1,7 @@
-<?php $this->extends('template'); ?>
+<?php $this->override('template'); ?>
 
 <?php $this->block('title'); ?>
-    Accueil
+    Default page
 <?php $this->endblock('title'); ?>
 
 <?php $this->block('body'); ?>
