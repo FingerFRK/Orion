@@ -39,7 +39,7 @@
          * @return All Retourne tous les éléments de la table liée au model
          */
         public function findAll() {
-            return $this->query("SELECT * FROM {$this->model}");
+            return $this->query("SELECT * FROM {$this->model}", true);
         }
 
         /**
@@ -47,7 +47,7 @@
          * @return findById Retourne l'élément récupérer par son Id
          */
         public function findById($id) {
-            return $this->query("SELECT * FROM {$this->model} WHERE id = ?", [$id], true);
+            return $this->query("SELECT * FROM {$this->model} WHERE id = ?", true, [$id], true);
         }
 
         /**
@@ -57,11 +57,11 @@
          * @param One Retourne un ou plusieurs éléments
          * @return Requete Retourne le résultat de la requête
          */
-        public function query($statement, $params = [], $one = false) {
+        public function query($statement, $fetch = false, $params = [], $one = false) {
             if ($params) {
-                return $this->db->prepare($statement, $params, str_replace('Model', 'Entity', get_class($this)), $one);
+                return $this->db->prepare($statement, $params, str_replace('Model', 'Entity', get_class($this)), $one, $fetch);
             } else {
-                return $this->db->query($statement, str_replace('Model', 'Entity', get_class($this)), $one);
+                return $this->db->query($statement, str_replace('Model', 'Entity', get_class($this)), $one, $fetch);
             }
         }
         
